@@ -6,7 +6,7 @@ of the downloaded release (there's no need to build the project), run as a norma
 modifiers (i.e. docker run somerepo/litecoin:0.18.1) should run the daemon, and print its output to the console.
 The build should be security conscious (and ideally pass a container image security test such as Anchore)
 --------
-This can be found if you take a look at the Dockerfile. Also you can bring that image up if you run: docker-compose up --build (Here you can see the container being build and the logs, since we didnt detach from the build)
+This can be found if you take a look at the Dockerfile. Also you can bring that image up if you run: docker-compose up --build (Here you can see the container being build and the logs, since we didnt detach from the build). Also, there is a output of the console when running the continer called "output_litcore-0.18.1.txt"
 
 
 2. k8s FTW: Write a Kubernetes StatefulSet to run the above, using persistent volume claims and resource limits.
