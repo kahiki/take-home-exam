@@ -1,0 +1,36 @@
+Hi, Thank you for taking the time out of your busy day to look over my take home exam. I am going to go over what i have done:
+
+
+1. Docker-ayes: Write a Dockerfile to run Litecoin 0.18.1 in a container. It should somehow verify the checksum
+of the downloaded release (there's no need to build the project), run as a normal user, and when run without any
+modifiers (i.e. docker run somerepo/litecoin:0.18.1) should run the daemon, and print its output to the console.
+The build should be security conscious (and ideally pass a container image security test such as Anchore)
+--------
+This can be found if you take a look at the Dockerfile. Also you can bring that image up if you run: docker-compose up --build (Here you can see the container being build and the logs, since we didnt detach from the build)
+
+
+2. k8s FTW: Write a Kubernetes StatefulSet to run the above, using persistent volume claims and resource limits.
+--------
+This can be found if you go into the k8s_statefulset folder. For this, I set it up in a way that you will need to use helm. So, if you have a k8s cluster/helm and run: helm install take-home-exam --debug -f ../k8s_statefulset/values.yaml ../k8s_statefulset/
+  (This will deploy the stateful set in the namespace take-home-exam)
+
+3. All the continuouses: Write a simple build and deployment pipeline for the above using groovy / Jenkinsfile,
+Travis CI or Gitlab CI.
+--------
+This can be found in the root of the project. If you take a look at the Jenkinsfile this will kick off the pipeline when a user creates a tag in github and will start building the image and then push that image to the repository (jfrog) from there it will deploy the image to GKE (This is what we are using) in the following stages (stage,UAT, Prod)
+
+4/5. Script kiddies: Source or come up with a text manipulation problem and solve it with at least two of awk, sed, tr
+and / or grep. Check the question below first though, maybe
+--------
+This can be found in the text_manipulation folder. Here we will be using the sed and tr command. The sed will find and replace a word and the tr command is going to space each word on a seperate line.
+
+6. Terraform lovers unite: write a Terraform module that creates the following resources in IAM;
+- A role, with no permissions, which can be assumed by users within the same account,
+- A policy, allowing users / entities to assume the above role,
+- A group, with the above policy attached,
+- A user, belonging to the above group.
+All four entities should have the same name, or be similarly named in some meaningful way given the
+context e.g. prod-ci-role, prod-ci-policy, prod-ci-group, prod-ci-user; or just prod-ci. Make the suffixes
+toggleable, if you like.
+--------
+Here you can find the terraform setup in two different folders. The first folder that holds the terraform modules (Terraform_AWS) this is where you are actually scripting what the module does. The second folder tf-stack, this is using terragrunt to wrap terraform and inside of the tf-stack folder you have a project folder that calls on the modules folder.

@@ -1,0 +1,10 @@
+version: "2.4"
+
+services:
+  php:
+    container_name: ${PROJECT_NAME}-php
+    image: ${PROJECT_NAME}-litecoin
+    build:
+      context: .
+    env_file:
+      - .env

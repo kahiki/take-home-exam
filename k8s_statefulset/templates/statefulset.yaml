@@ -1,0 +1,85 @@
+########
+#This was pulled from https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+#Also will be setting this up like if we were going to deplpy via helm and in AWS
+########
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.NAMESPACE }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.NAME }}
+spec:
+  type: NodePort
+  selector:
+    app: {{ .Values.NAME }}
+  ports:
+    - protocol: TCP
+      port: 80
+      nodePort:
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .Values.NAME }}-stg
+  namespace: {{ .Values.NAMESPACE }}
+  labels:
+    name: {{ .Values.NAME }}
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+  iopsPerGB: "10"
+  fsType: ext4
+reclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.NAME }}-pvc
+  namespace: {{ .Values.NAMESPACE }}
+spec:
+  storageClassName: {{ .Values.NAME }}-stg
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.STORAGE_SIZE }}Gi
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.NAME }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.NAME }} # has to match .spec.template.metadata.labels
+  serviceName: {{ .Values.NAME }}-svc
+  replicas: {{ .Values.REPLICAS }} # by default is 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.NAME }} # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - image: chaugh/{{ .Values.NAME }}-{{ .Values.PHP_VERSION }} ###This is the image i built and put on dockerhub
+        name: {{ .Values.NAME }}
+        ports:
+        - containerPort: 80
+          name: web
+        volumeMounts:
+        - name: www
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+  - metadata:
+      name: www #This needs to match the of the volumeMount
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: {{ .Values.NAME }}-stg
+      resources:
+        requests:
+          storage: {{ .Values.STORAGE_SIZE }}Gi
