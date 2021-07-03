@@ -11,12 +11,12 @@ steps:
     args:
       - "-c"
       - |
-        docker login jellyfish-docker.jfrog.io --username=take-home-test-cloudbuild --password=$$JFROG_PASSWORD
+        docker login --username=take-home-test-cloudbuild --password=$$JFROG_PASSWORD
 
         docker build . --target php \
-          -t jellyfish-docker.jfrog.io/${_PROJECT_NAME}-php:${TAG_NAME}
+          -t chaugh/${_PROJECT_NAME}-php:${TAG_NAME}
 
-        docker push jellyfish-docker.jfrog.io/${_PROJECT_NAME}-drupal:${TAG_NAME}
+        docker push chaugh/${_PROJECT_NAME}-php:${TAG_NAME}
 
   ## Trigger jenkins job when all pushes to JFrog complete
   - name: "gcr.io/cloud-builders/curl"
@@ -28,12 +28,12 @@ steps:
         '{"jenkins_job_token": "start-${_PROJECT_NAME}-jenkinsfile", "git_tag_id": "$TAG_NAME"}',
         "-X",
         "POST",
-        "https://us-central1-jellyfish-development-167809.cloudfunctions.net/CfToIAP",
+        "https://us-central1-stage-development-167809.cloudfunctions.net/CfToIAP",
       ]
     id: "Trigger jenkins"
 
 ## Google KMS KEY for JFROG_PASSWORD Login
 secrets:
-  - kmsKeyName: projects/jellyfish-development-167809/locations/global/keyRings/JFROGKEYRING/cryptoKeys/JFROGCRYPTOKEY
+  - kmsKeyName: projects/stage-development-167809/locations/global/keyRings/JFROGKEYRING/cryptoKeys/JFROGCRYPTOKEY
     secretEnv:
       JFROG_PASSWORD: afdadsfadsfasdfasdfadsfasdfadsf
