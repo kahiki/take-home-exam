@@ -33,4 +33,4 @@ All four entities should have the same name, or be similarly named in some meani
 context e.g. prod-ci-role, prod-ci-policy, prod-ci-group, prod-ci-user; or just prod-ci. Make the suffixes
 toggleable, if you like.
 --------
-Here you can find the terraform setup in two different folders. The first folder that holds the terraform modules (Terraform_AWS) this is where you are actually scripting what the module does. The second folder tf-stack, this is using terragrunt to wrap terraform and inside of the tf-stack folder you have a project folder that calls on the modules folder.
+Here you can find the terraform setup in two different folders. The first folder that holds the terraform modules (Terraform_AWS) this is where you are actually scripting what the module does. The second folder tf-stack, this is using terragrunt to wrap terraform and inside of the tf-stack folder you have a project folder that calls on the modules folder. Inside of tf-stack/haugh-aws run the following: terragrunt apply-all. You will need to have the appropriate AWS permissions to be able to create users, groups, roles, and policies.
